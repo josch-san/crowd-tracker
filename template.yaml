@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CrowdTracker - Project
+
+Parameters:
+  Mode:
+    Type: String
+    Description: Build mode
+    Default: development
+    AllowedValues:
+      - development
+      - stage
+      - production
+
+Resources:
+  Core:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: core/template.yaml
+      Parameters:
+        Mode: !Ref Mode
+      Tags:
+        application: croud-tracker
+        module: project
+        environment: !Ref Mode

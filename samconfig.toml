@@ -1,0 +1,16 @@
+version=0.1
+[default.deploy.parameters]
+stack_name = "crowd-tracker-development"
+s3_bucket = "strato-deployment-templates"
+s3_prefix = "crowd-tracker"
+region = "us-east-1"
+capabilities = "CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides = "Mode=development"
+
+[production.deploy.parameters]
+stack_name = "crowd-tracker-production"
+s3_bucket = "strato-deployment-templates"
+s3_prefix = "crowd-tracker"
+region = "us-east-1"
+capabilities = "CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides = "Mode=production"

@@ -1,0 +1,12 @@
+{
+  "name": "crowd-tracker",
+  "version": "1.0.0",
+  "description": "Application to keep track on crowded shops",
+  "main": "index.js",
+  "scripts": {
+    "sam:build": "sam build",
+    "sam:deploy": "sam deploy"
+  },
+  "author": "josch-san",
+  "license": "ISC"
+}
