@@ -38,6 +38,15 @@ Resources:
         environment: !Ref Mode
 
 Outputs:
-  ApiUrl:
-    Value: !GetAtt Backend.Outputs.ApiUrl
-    Description: GraphQL api url
+  Region:
+    Value: !Ref AWS::Region
+    Description: Project deployment's region
+  UserPoolId:
+    Value: !GetAtt Backend.Outputs.UserPoolId
+    Description: Cognito user pool id
+  UserPoolWebClientId:
+    Value: !GetAtt Backend.Outputs.UserPoolWebClientId
+    Description: Cognito user pool web client id
+  AppSyncUrl:
+    Value: !GetAtt Backend.Outputs.AppSyncUrl
+    Description: URL for appsync api
