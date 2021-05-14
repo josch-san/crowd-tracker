@@ -20,6 +20,24 @@ Resources:
       Parameters:
         Mode: !Ref Mode
       Tags:
-        application: croud-tracker
+        application: crowd-tracker
         module: project
         environment: !Ref Mode
+
+  Backend:
+    Type: AWS::Serverless::Application
+    DependsOn: Core
+    Properties:
+      Location: backend/template.yaml
+      Parameters:
+        Mode: !Ref Mode
+        TableName: !GetAtt Core.Outputs.TableName
+      Tags:
+        application: crowd-tracker
+        module: project
+        environment: !Ref Mode
+
+Outputs:
+  ApiUrl:
+    Value: !GetAtt Backend.Outputs.ApiUrl
+    Description: GraphQL api url

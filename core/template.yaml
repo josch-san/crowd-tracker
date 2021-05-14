@@ -63,8 +63,13 @@ Resources:
             WriteCapacityUnits: 2
       Tags:
         - Key: application
-          Value: croud-tracker
+          Value: crowd-tracker
         - Key: module
           Value: core
         - Key: environment
           Value: !Ref Mode
+
+Outputs:
+  TableName:
+    Value: !Ref DynamoDBTable
+    Description: DynamoDB table name

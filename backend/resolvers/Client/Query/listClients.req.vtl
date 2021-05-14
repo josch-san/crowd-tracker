@@ -1,0 +1,12 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "Query",
+  "index" : "gsi1",
+  "query" : {
+    "expression" : "gsi1pk = :gsi1pk",
+    "expressionValues" : {
+      ":gsi1pk" : $util.dynamodb.toDynamoDBJson("CLIENT")
+    }
+  },
+  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+}

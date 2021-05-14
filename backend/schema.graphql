@@ -1,0 +1,27 @@
+type Client {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    clientId: String!
+
+    name: String
+}
+
+type ClientConnection {
+    items: [Client]
+    nextToken: String
+}
+
+input CreateClientInput {
+    name: String!
+}
+
+type Query {
+    getClient(clientId: String!): Client
+    listClients(limit: Int, nextToken: String): ClientConnection
+}
+
+type Mutation {
+    createClient(input: CreateClientInput!): Client
+}

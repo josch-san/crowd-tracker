@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CrowdTracker - Backend
+
+Parameters:
+  Mode:
+    Type: String
+    Description: Build mode
+    Default: development
+    AllowedValues:
+      - development
+      - stage
+      - production
+  TableName:
+    Type: String
+    Description: DynamoDB table name
+
+Mappings:
+  ModeMap:
+    development:
+      ModeSuffix: -dev
+      ApiName: Crowd Tracker Dev
+    stage:
+      ModeSuffix: -test
+      ApiName: Crowd Tracker Stage
+    production:
+      ModeSuffix: ''
+      ApiName: Crowd Tracker
+
+Resources:
+  BackendAppSyncRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /service-role/
+      RoleName: !Sub
+        - 'CrowdTrackerAppSyncRole${suffix}'
+        - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+      Description: Crowd tracker project appsync service role.
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: appsync.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub
+            - 'appsync-policy${suffix}'
+            - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - 
+                Effect: Allow
+                Action:
+                  - dynamodb:Scan
+                  - dynamodb:Query
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  # - dynamodb:DeleteItem
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/*'
+
+  GraphQLApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: !FindInMap [ModeMap, !Ref Mode, ApiName]
+      AuthenticationType: AWS_IAM
+      # UserPoolConfig:
+      #   AppIdClientRegex: String
+      #   AwsRegion: !Ref AWS::Region
+      #   DefaultAction: ALLOW
+      #   UserPoolId: String
+      Tags:
+        - Key: application
+          Value: crowd-tracker
+        - Key: module
+          Value: backend
+        - Key: environment
+          Value: !Ref Mode
+
+  ApiSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      DefinitionS3Location: schema.graphql
+
+  DynamoDBDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Type: AMAZON_DYNAMODB
+      Name: traficTrackerDynamodb
+      Description: Crowd Tracker DynamoDB connection
+      DynamoDBConfig:
+        AwsRegion: !Ref AWS::Region
+        TableName: !Ref TableName
+      ServiceRoleArn: !GetAtt BackendAppSyncRole.Arn
+
+  QueryGetClientResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: ApiSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      DataSourceName: !GetAtt DynamoDBDataSource.Name
+      TypeName: Query
+      FieldName: getClient
+      RequestMappingTemplateS3Location: resolvers/Client/Query/getClient.req.vtl
+      ResponseMappingTemplateS3Location: resolvers/Client/Query/getClient.res.vtl
+
+  QueryListClientsResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: ApiSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      DataSourceName: !GetAtt DynamoDBDataSource.Name
+      TypeName: Query
+      FieldName: listClients
+      RequestMappingTemplateS3Location: resolvers/Client/Query/listClients.req.vtl
+      ResponseMappingTemplateS3Location: resolvers/Client/Query/listClients.res.vtl
+
+  MutationCreateClientResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: ApiSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      DataSourceName: !GetAtt DynamoDBDataSource.Name
+      TypeName: Mutation
+      FieldName: createClient
+      RequestMappingTemplateS3Location: resolvers/Client/Mutation/createClient.req.vtl
+      ResponseMappingTemplateS3Location: resolvers/Client/Mutation/createClient.res.vtl
+
+Outputs:
+  ApiUrl:
+    Value: !GetAtt GraphQLApi.GraphQLUrl
+    Description: GraphQL api url

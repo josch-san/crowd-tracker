@@ -1,0 +1,12 @@
+$!{ctx.args.input.put("gsi1pk", "CLIENT")}
+$!{ctx.args.input.put("clientId", "$util.autoId()")}
+
+{
+  "version" : "2018-05-29",
+  "operation" : "PutItem",
+  "key" : {
+    "pk": $util.dynamodb.toDynamoDBJson("CLIENT#$ctx.args.input.clientId"),
+    "sk": $util.dynamodb.toDynamoDBJson("#METADATA#$ctx.args.input.clientId")
+  },
+  "attributeValues" : $util.dynamodb.toMapValuesJson($ctx.args.input)
+}
