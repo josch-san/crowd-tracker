@@ -69,7 +69,113 @@ Resources:
         - Key: environment
           Value: !Ref Mode
 
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+        InviteMessageTemplate:
+          EmailMessage: Tu usuario de acceso a la aplicación CrowdTracker es {username} y la contraseña temporal es {####}
+          EmailSubject: Bienvenido a CrowdTracker
+      AutoVerifiedAttributes:
+        - email
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      MfaConfiguration: 'OFF'
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireLowercase: false
+          RequireUppercase: false
+          TemporaryPasswordValidityDays: 7
+      Schema:
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+      UsernameAttributes:
+        - email
+      UsernameConfiguration:
+        CaseSensitive: false
+      UserPoolName: !Sub
+        - 'crowd-tracker-user-pool${suffix}'
+        - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+        EmailMessage: Tu codigo de verificación es {####}.
+        EmailSubject: CrowdTracker - Código de verificación
+      UserPoolTags:
+        application: crowd-tracker
+        module: backend
+        environment: !Ref Mode
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      Domain: !Sub
+        - 'crowd-tracker${suffix}'
+        - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+        # - suffix: !Transform
+        #     - Name: String
+        #       Parameters:
+        #         InputString: !Select [0, !Split [-, !Select [2, !Split [/, !Ref AWS::StackId ]]]]
+        #         Operation: Lower
+
+  GoogleIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ProviderName: Google
+      ProviderType: Google
+      ProviderDetails:
+        client_id: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_id}}'
+        client_secret: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_secret}}'
+        authorize_scopes: profile email openid
+      AttributeMapping:
+        name: name
+        email: email
+        email_verified: email_verified
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: crowd-tracker-web-client
+      ExplicitAuthFlows:
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      RefreshTokenValidity: 31
+      AllowedOAuthFlowsUserPoolClient: true
+      SupportedIdentityProviders: [ !Ref GoogleIdentityProvider ]
+      AllowedOAuthFlows: [ code ]
+      AllowedOAuthScopes: [ email, profile, openid, aws.cognito.signin.user.admin ]
+      CallbackURLs: [ http://localhost:3000/login ]
+      LogoutURLs: [ http://localhost:3000 ]
+
 Outputs:
   TableName:
     Value: !Ref DynamoDBTable
     Description: DynamoDB table name
+  UserPoolId:
+    Value: !Ref CognitoUserPool
+    Description: Cognito user pool id
+  UserPoolWebClientId:
+    Value: !Ref CognitoUserPoolClient
+    Description: Cognito user pool web client id
+  UserPoolDomain:
+    Value: !Sub '${CognitoUserPoolDomain}.auth.${AWS::Region}.amazoncognito.com'
+    Description: Url for federated user pool domain

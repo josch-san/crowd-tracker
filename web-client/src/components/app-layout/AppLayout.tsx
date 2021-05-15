@@ -5,7 +5,6 @@ import { useStores } from 'stores/RootStore'
 
 const AppLayout: React.FC = observer(() => {
   const { authStore, clientStore } = useStores()
-  console.log(clientStore.clients.slice())
 
   React.useEffect(() => {
     clientStore.listClients()

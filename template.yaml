@@ -32,6 +32,7 @@ Resources:
       Parameters:
         Mode: !Ref Mode
         TableName: !GetAtt Core.Outputs.TableName
+        UserPoolId: !GetAtt Core.Outputs.UserPoolId
       Tags:
         application: crowd-tracker
         module: project
@@ -42,13 +43,13 @@ Outputs:
     Value: !Ref AWS::Region
     Description: Project deployment's region
   UserPoolId:
-    Value: !GetAtt Backend.Outputs.UserPoolId
+    Value: !GetAtt Core.Outputs.UserPoolId
     Description: Cognito user pool id
   UserPoolWebClientId:
-    Value: !GetAtt Backend.Outputs.UserPoolWebClientId
+    Value: !GetAtt Core.Outputs.UserPoolWebClientId
     Description: Cognito user pool web client id
   UserPoolDomain:
-    Value: !GetAtt Backend.Outputs.UserPoolDomain
+    Value: !GetAtt Core.Outputs.UserPoolDomain
     Description: Url for federated user pool domain
   AppSyncUrl:
     Value: !GetAtt Backend.Outputs.AppSyncUrl
