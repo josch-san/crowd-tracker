@@ -144,7 +144,7 @@ Resources:
         client_secret: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_secret}}'
         authorize_scopes: profile email openid
       AttributeMapping:
-        # username: sub
+        name: name
         email: email
         email_verified: email_verified
 

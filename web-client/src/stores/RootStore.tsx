@@ -6,14 +6,14 @@ import ClientStore from 'stores/ClientStore'
 
 
 export default class RootStore {
-  ui: UiState
+  uiStore: UiState
   authStore: AuthStore
-  client: ClientStore
+  clientStore: ClientStore
 
   constructor() {
-    this.ui = new UiState()
+    this.uiStore = new UiState()
     this.authStore = new AuthStore()
-    this.client = new ClientStore()
+    this.clientStore = new ClientStore()
   }
 }
 
