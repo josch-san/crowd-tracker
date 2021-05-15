@@ -1,4 +1,4 @@
-type Client {
+type Client @aws_cognito_user_pools @aws_iam {
     pk: ID!
     sk: ID!
     gsi1pk: ID!
@@ -18,10 +18,10 @@ input CreateClientInput {
 }
 
 type Query {
-    getClient(clientId: String!): Client
-    listClients(limit: Int, nextToken: String): ClientConnection
+    getClient(clientId: String!): Client @aws_cognito_user_pools @aws_iam
+    listClients(limit: Int, nextToken: String): ClientConnection @aws_cognito_user_pools @aws_iam
 }
 
 type Mutation {
-    createClient(input: CreateClientInput!): Client
+    createClient(input: CreateClientInput!): Client @aws_iam
 }

@@ -50,3 +50,6 @@ Outputs:
   AppSyncUrl:
     Value: !GetAtt Backend.Outputs.AppSyncUrl
     Description: URL for appsync api
+  ApiAuthenticationType:
+    Value: !GetAtt Backend.Outputs.ApiAuthenticationType
+    Description: Main appsync API authentication type

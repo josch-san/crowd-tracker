@@ -218,3 +218,6 @@ Outputs:
   AppSyncUrl:
     Value: !GetAtt GraphQLApi.GraphQLUrl
     Description: URL for appsync api
+  ApiAuthenticationType:
+    Value: AMAZON_COGNITO_USER_POOLS
+    Description: Main appsync API authentication type
