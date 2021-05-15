@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
-class AuthStore {
+export default class AuthStore {
   user: string = 'unknown'
 
   constructor() {
@@ -11,9 +11,11 @@ class AuthStore {
     this.user = 'josch'
   }
 
+  logout = () => {
+    this.user = 'unknown'
+  }
+
   get isAuthenticated() {
     return this.user !== 'unknown'
   }
 }
-
-export default AuthStore

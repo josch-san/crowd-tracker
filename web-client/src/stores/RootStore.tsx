@@ -11,7 +11,6 @@ export default class RootStore {
   client: ClientStore
 
   constructor() {
-
     this.ui = new UiState()
     this.authStore = new AuthStore()
     this.client = new ClientStore()
