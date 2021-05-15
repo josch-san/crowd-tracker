@@ -47,6 +47,9 @@ Outputs:
   UserPoolWebClientId:
     Value: !GetAtt Backend.Outputs.UserPoolWebClientId
     Description: Cognito user pool web client id
+  UserPoolDomain:
+    Value: !GetAtt Backend.Outputs.UserPoolDomain
+    Description: Url for federated user pool domain
   AppSyncUrl:
     Value: !GetAtt Backend.Outputs.AppSyncUrl
     Description: URL for appsync api

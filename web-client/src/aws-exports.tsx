@@ -5,13 +5,13 @@ const settings = {
     // identityPoolId: process.env.REACT_APP_AUTH_IDENTITY_POOL_ID,
     userPoolWebClientId: process.env.REACT_APP_AUTH_USER_POOL_WEB_CLIENT_ID,
 
-    // oauth: {
-    //   domain: "crowd-tracker-dev.auth.us-east-1.amazoncognito.com",
-    //   scope: [ "openid", "email", "aws.cognito.signin.user.admin"],
-    //   redirectSignIn: "http://localhost:3000/sign-in",
-    //   redirectSignOut: "http://localhost:3000",
-    //   responseType: "code"
-    // }
+    oauth: {
+      domain: process.env.REACT_APP_AUTH_USER_POOL_DOMAIN,
+      scope: [ "openid", "email", "aws.cognito.signin.user.admin"],
+      redirectSignIn: "http://localhost:3000/login",
+      redirectSignOut: "http://localhost:3000",
+      responseType: "code"
+    }
   },
 
   API: {

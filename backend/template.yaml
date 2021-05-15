@@ -120,6 +120,34 @@ Resources:
         module: backend
         environment: !Ref Mode
 
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      Domain: !Sub
+        - 'crowd-tracker${suffix}'
+        - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+        # - suffix: !Transform
+        #     - Name: String
+        #       Parameters:
+        #         InputString: !Select [0, !Split [-, !Select [2, !Split [/, !Ref AWS::StackId ]]]]
+        #         Operation: Lower
+
+  GoogleIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ProviderName: Google
+      ProviderType: Google
+      ProviderDetails:
+        client_id: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_id}}'
+        client_secret: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_secret}}'
+        authorize_scopes: profile email openid
+      AttributeMapping:
+        # username: sub
+        email: email
+        email_verified: email_verified
+
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
@@ -133,9 +161,10 @@ Resources:
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 31
       AllowedOAuthFlowsUserPoolClient: true
+      SupportedIdentityProviders: [ !Ref GoogleIdentityProvider ]
       AllowedOAuthFlows: [ code ]
       AllowedOAuthScopes: [ email, profile, openid, aws.cognito.signin.user.admin ]
-      CallbackURLs: [ http://localhost:3000/sign-in ]
+      CallbackURLs: [ http://localhost:3000/login ]
       LogoutURLs: [ http://localhost:3000 ]
 
   GraphQLApi:
@@ -215,6 +244,9 @@ Outputs:
   UserPoolWebClientId:
     Value: !Ref CognitoUserPoolClient
     Description: Cognito user pool web client id
+  UserPoolDomain:
+    Value: !Sub '${CognitoUserPoolDomain}.auth.${AWS::Region}.amazoncognito.com'
+    Description: Url for federated user pool domain
   AppSyncUrl:
     Value: !GetAtt GraphQLApi.GraphQLUrl
     Description: URL for appsync api

@@ -18,6 +18,12 @@ const PublicRoute: React.FC<RouteProps> = observer(({ children, ...rest }) => {
   const { authStore } = useStores()
   const isAuthenticated = authStore.isAuthenticated
 
+  React.useEffect(() => {
+    authStore.verifyAuth()
+
+    // eslint-disable-next-line
+  }, [])
+
   return <Route {...rest} render={({ location }) =>
     isAuthenticated ? <Redirect to={{pathname: '/app', state: { from: location }}} /> : children
   } />
@@ -26,6 +32,12 @@ const PublicRoute: React.FC<RouteProps> = observer(({ children, ...rest }) => {
 const PrivateRoute: React.FC<RouteProps> = observer(({ children, ...rest }) => {
   const { authStore } = useStores()
   const isAuthenticated = authStore.isAuthenticated
+
+  React.useEffect(() => {
+    authStore.verifyAuth()
+
+    // eslint-disable-next-line
+  }, [])
 
   return <Route {...rest} render={({ location }) =>
     isAuthenticated ? children : <Redirect to={{pathname: '/login', state: { from: location }}} />
