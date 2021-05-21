@@ -9,9 +9,15 @@ query ListTenants {
 }
 `
 
+export const tryDebugger = `
+query TryDebugger($exampleId: String) {
+  tryDebugger(exampleId: $exampleId)
+}
+`
+
 export const getTenants = `
-query GetTenants {
-  getTenant(tenantId: "") {
+query GetTenants($tenantId: String!) {
+  getTenant(tenantId: $tenantId) {
     name
     tenantId
   }

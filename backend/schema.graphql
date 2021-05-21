@@ -20,6 +20,7 @@ input CreateTenantInput {
 type Query {
     getTenant(tenantId: String!): Tenant @aws_cognito_user_pools @aws_iam
     listTenants(limit: Int, nextToken: String): TenantConnection @aws_cognito_user_pools @aws_iam
+    tryDebugger(exampleId: String): Boolean @aws_cognito_user_pools @aws_iam
 }
 
 type Mutation {

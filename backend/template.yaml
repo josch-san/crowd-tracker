@@ -31,6 +31,31 @@ Mappings:
       ApiName: Crowd Tracker
 
 Resources:
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /service-role/
+      RoleName: !Sub
+        - 'CrowdTrackerLambdaRole${suffix}'
+        - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+      Description: 'CrowdTracker Lambda service role.'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Tags:
+        - Key: application
+          Value: crowd-tracker
+        - Key: module
+          Value: backend
+        - Key: environment
+          Value: !Ref Mode
+
   BackendAppSyncRole:
     Type: AWS::IAM::Role
     Properties:
@@ -65,6 +90,10 @@ Resources:
                 Resource:
                   - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}'
                   - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/*'
+              - 
+                Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:crowd-tracker-*'
       Tags:
         - Key: application
           Value: crowd-tracker
@@ -72,6 +101,23 @@ Resources:
           Value: backend
         - Key: environment
           Value: !Ref Mode
+
+  DebuggerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub
+        - 'crowd-tracker-debugger${suffix}'
+        - suffix: !FindInMap [ModeMap, !Ref Mode, ModeSuffix]
+      Role: !GetAtt LambdaRole.Arn
+      Description: Debugger for appsync endpoints
+      CodeUri: lambda/debugger
+      Handler: lambda_function.handler
+      Timeout: 30
+      Runtime: python3.8
+      Tags:
+        application: crowd-tracker
+        module: backend
+        environment: !Ref Mode
 
   GraphQLApi:
     Type: AWS::AppSync::GraphQLApi
@@ -109,6 +155,26 @@ Resources:
         AwsRegion: !Ref AWS::Region
         TableName: !Ref TableName
       ServiceRoleArn: !GetAtt BackendAppSyncRole.Arn
+
+  LambdaDebuggerDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Type: AWS_LAMBDA
+      Name: lambdaDebugger
+      Description: For debug content
+      LambdaConfig:
+        LambdaFunctionArn: !GetAtt DebuggerFunction.Arn
+      ServiceRoleArn: !GetAtt BackendAppSyncRole.Arn
+
+  QueryTryDebuggerResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn: ApiSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      DataSourceName: !GetAtt LambdaDebuggerDataSource.Name
+      TypeName: Query
+      FieldName: tryDebugger
 
   QueryGetTenantResolver:
     Type: AWS::AppSync::Resolver

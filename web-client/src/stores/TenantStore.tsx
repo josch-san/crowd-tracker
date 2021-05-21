@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { API, graphqlOperation } from 'aws-amplify'
 import { GraphQLResult } from "@aws-amplify/api"
 
-import { listTenants } from 'graphql/queries'
+import { listTenants, tryDebugger } from 'graphql/queries'
 
 
 interface Paginator<T> {
@@ -26,6 +26,20 @@ export default class TenantStore {
 
   getTenant = async (tenantId: string) => {
 
+  }
+
+  tryDebugger = async (exampleId: string) => {
+
+    try {
+      const response = await API.graphql(graphqlOperation(tryDebugger, { exampleId }))
+      console.log(response)
+
+    } catch(error) {
+      console.log(error.message)
+      runInAction(() => {
+        this.tenants = []
+      })
+    }
   }
 
   listTenants = async () => {
