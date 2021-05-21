@@ -1,0 +1,11 @@
+{
+  "version": "2017-02-28",
+  "operation": "Query",
+  "query": {
+    "expression" : "pk = :pk AND sk = :metadata",
+    "expressionValues" : {
+      ":pk" : $util.dynamodb.toDynamoDBJson("TENANT#$ctx.args.tenantId"),
+      ":metadata" : $util.dynamodb.toDynamoDBJson("#METADATA#$ctx.args.tenantId")
+    }
+  }
+}

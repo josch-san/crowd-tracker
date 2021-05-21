@@ -103,6 +103,10 @@ Resources:
           AttributeDataType: String
           Mutable: true
           Required: false
+        - Name: tenantId
+          AttributeDataType: String
+          Mutable: true
+          Required: false
       UsernameAttributes:
         - email
       UsernameConfiguration:

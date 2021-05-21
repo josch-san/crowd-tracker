@@ -110,38 +110,38 @@ Resources:
         TableName: !Ref TableName
       ServiceRoleArn: !GetAtt BackendAppSyncRole.Arn
 
-  QueryGetClientResolver:
+  QueryGetTenantResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: ApiSchema
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       DataSourceName: !GetAtt DynamoDBDataSource.Name
       TypeName: Query
-      FieldName: getClient
-      RequestMappingTemplateS3Location: resolvers/Client/Query/getClient.req.vtl
-      ResponseMappingTemplateS3Location: resolvers/Client/Query/getClient.res.vtl
+      FieldName: getTenant
+      RequestMappingTemplateS3Location: resolvers/Tenant/Query/getTenant.req.vtl
+      ResponseMappingTemplateS3Location: resolvers/Tenant/Query/getTenant.res.vtl
 
-  QueryListClientsResolver:
+  QueryListTenantsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: ApiSchema
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       DataSourceName: !GetAtt DynamoDBDataSource.Name
       TypeName: Query
-      FieldName: listClients
-      RequestMappingTemplateS3Location: resolvers/Client/Query/listClients.req.vtl
-      ResponseMappingTemplateS3Location: resolvers/Client/Query/listClients.res.vtl
+      FieldName: listTenants
+      RequestMappingTemplateS3Location: resolvers/Tenant/Query/listTenants.req.vtl
+      ResponseMappingTemplateS3Location: resolvers/Tenant/Query/listTenants.res.vtl
 
-  MutationCreateClientResolver:
+  MutationCreateTenantResolver:
     Type: AWS::AppSync::Resolver
     DependsOn: ApiSchema
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       DataSourceName: !GetAtt DynamoDBDataSource.Name
       TypeName: Mutation
-      FieldName: createClient
-      RequestMappingTemplateS3Location: resolvers/Client/Mutation/createClient.req.vtl
-      ResponseMappingTemplateS3Location: resolvers/Client/Mutation/createClient.res.vtl
+      FieldName: createTenant
+      RequestMappingTemplateS3Location: resolvers/Tenant/Mutation/createTenant.req.vtl
+      ResponseMappingTemplateS3Location: resolvers/Tenant/Mutation/createTenant.res.vtl
 
 Outputs:
   AppSyncUrl:

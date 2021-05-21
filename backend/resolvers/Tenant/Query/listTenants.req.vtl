@@ -5,7 +5,7 @@
   "query" : {
     "expression" : "gsi1pk = :gsi1pk",
     "expressionValues" : {
-      ":gsi1pk" : $util.dynamodb.toDynamoDBJson("CLIENT")
+      ":gsi1pk" : $util.dynamodb.toDynamoDBJson("TENANT")
     }
   },
   "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))

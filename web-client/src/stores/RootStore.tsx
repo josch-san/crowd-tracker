@@ -2,18 +2,18 @@ import React from 'react'
 
 import UiState from 'stores/UiState'
 import AuthStore from 'stores/AuthStore'
-import ClientStore from 'stores/ClientStore'
+import TenantStore from 'stores/TenantStore'
 
 
 export default class RootStore {
   uiStore: UiState
   authStore: AuthStore
-  clientStore: ClientStore
+  tenantStore: TenantStore
 
   constructor() {
     this.uiStore = new UiState()
     this.authStore = new AuthStore()
-    this.clientStore = new ClientStore()
+    this.tenantStore = new TenantStore()
   }
 }
 

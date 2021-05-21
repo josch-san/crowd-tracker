@@ -1,19 +1,19 @@
-export const listClients = `
-query ListClients {
-  listClients {
+export const listTenants = `
+query ListTenants {
+  listTenants {
     items {
-      clientId
+      tenantId
       name
     }
   }
 }
 `
 
-export const getClients = `
-query GetClients {
-  getClient(clientId: "") {
+export const getTenants = `
+query GetTenants {
+  getTenant(tenantId: "") {
     name
-    clientId
+    tenantId
   }
 }
 `

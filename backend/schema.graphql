@@ -1,27 +1,27 @@
-type Client @aws_cognito_user_pools @aws_iam {
+type Tenant @aws_cognito_user_pools @aws_iam {
     pk: ID!
     sk: ID!
     gsi1pk: ID!
 
-    clientId: String!
+    tenantId: ID!
 
     name: String
 }
 
-type ClientConnection {
-    items: [Client]
+type TenantConnection {
+    items: [Tenant]
     nextToken: String
 }
 
-input CreateClientInput {
+input CreateTenantInput {
     name: String!
 }
 
 type Query {
-    getClient(clientId: String!): Client @aws_cognito_user_pools @aws_iam
-    listClients(limit: Int, nextToken: String): ClientConnection @aws_cognito_user_pools @aws_iam
+    getTenant(tenantId: String!): Tenant @aws_cognito_user_pools @aws_iam
+    listTenants(limit: Int, nextToken: String): TenantConnection @aws_cognito_user_pools @aws_iam
 }
 
 type Mutation {
-    createClient(input: CreateClientInput!): Client @aws_iam
+    createTenant(input: CreateTenantInput!): Tenant @aws_iam
 }

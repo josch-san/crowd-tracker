@@ -4,10 +4,10 @@ import { observer } from 'mobx-react-lite'
 import { useStores } from 'stores/RootStore'
 
 const AppLayout: React.FC = observer(() => {
-  const { authStore, clientStore } = useStores()
+  const { authStore, tenantStore } = useStores()
 
   React.useEffect(() => {
-    clientStore.listClients()
+    tenantStore.listTenants()
 
     // eslint-disable-next-line
   }, [])
@@ -19,7 +19,7 @@ const AppLayout: React.FC = observer(() => {
         logout
       </button>
       <ul>
-        {clientStore.clients.map(client => <li key={client.clientId}>{client.name}</li>)}
+        {tenantStore.tenants.map(tenant => <li key={tenant.tenantId}>{tenant.name}</li>)}
       </ul>
     </main>
   )
