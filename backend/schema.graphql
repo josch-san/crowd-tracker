@@ -1,16 +1,108 @@
+enum UsagePlan {
+    FREE
+    STANDARD
+    PLUS
+    ENTERPRISE
+}
+
 type Tenant @aws_cognito_user_pools @aws_iam {
     pk: ID!
     sk: ID!
     gsi1pk: ID!
 
     tenantId: ID!
+    tier: UsagePlan
 
     name: String
+    branches: BranchConnection
 }
 
 type TenantConnection {
     items: [Tenant]
     nextToken: String
+}
+
+type Branch {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    tenantId: ID!
+    branchId: ID!
+    views: BranchViewConnection
+
+    address: String
+    latitude: Float
+    longitude: Float
+}
+
+type BranchConnection {
+    items: [Branch]
+    nextToken: String
+}
+
+type BranchView {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    tenantId: ID!
+    branchViewId: ID!
+}
+
+type BranchViewConnection {
+    items: [BranchView]
+    nextToken: String
+}
+
+interface Device {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    deviceId: ID!
+    hardwareModel: String
+    firmwareVersion: String
+
+
+    enabled: Boolean!
+    type: String!
+    name: string
+}
+
+type Tracker implements Device {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    tenantId: ID!
+    deviceId: ID!
+
+    type: String!
+    name: String
+}
+
+interface Record {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    tenantId: ID!
+    deviceId: ID!
+
+    ts: String
+}
+
+type TrackerRecord implements Record {
+    pk: ID!
+    sk: ID!
+    gsi1pk: ID!
+
+    tenantId: ID!
+    deviceId: ID!
+
+    ts: String
+    name: String
 }
 
 input CreateTenantInput {

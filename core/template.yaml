@@ -69,6 +69,11 @@ Resources:
         - Key: environment
           Value: !Ref Mode
 
+  # RecordsTable:
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: !Sub
+
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:

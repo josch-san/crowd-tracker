@@ -8,5 +8,11 @@
       ":gsi1pk" : $util.dynamodb.toDynamoDBJson("TENANT")
     }
   },
+  "filter" : {
+    "expression" : "tenantId = :tenantId",
+    "expressionValues" : {
+      ":tenantId" : $util.dynamodb.toDynamoDBJson("$ctx.identity.claims.get('custom:tenantId')")
+    }
+  },
   "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
 }
