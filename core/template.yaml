@@ -148,8 +148,8 @@ Resources:
       ProviderName: Google
       ProviderType: Google
       ProviderDetails:
-        client_id: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_id}}'
-        client_secret: '{{resolve:secretsmanager:prod/crowd-tracker/oidc/google:SecretString:client_secret}}'
+        client_id: '{{resolve:ssm:/dev/oidc/crowd-tracker/google/client_id}}'
+        client_secret: '{{resolve:ssm:/dev/oidc/crowd-tracker/google/client_secret}}'
         authorize_scopes: profile email openid
       AttributeMapping:
         name: name

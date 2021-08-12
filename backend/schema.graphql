@@ -64,10 +64,9 @@ interface Device {
     hardwareModel: String
     firmwareVersion: String
 
-
     enabled: Boolean!
     type: String!
-    name: string
+    name: String
 }
 
 type Tracker implements Device {
@@ -77,7 +76,10 @@ type Tracker implements Device {
 
     tenantId: ID!
     deviceId: ID!
+    hardwareModel: String
+    firmwareVersion: String
 
+    enabled: Boolean!
     type: String!
     name: String
 }
