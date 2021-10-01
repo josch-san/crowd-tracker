@@ -6,7 +6,7 @@ $!{ctx.args.input.put("tenantId", "$util.autoId()")}
   "operation" : "PutItem",
   "key" : {
     "pk": $util.dynamodb.toDynamoDBJson("TENANT#$ctx.args.input.tenantId"),
-    "sk": $util.dynamodb.toDynamoDBJson("#METADATA#$ctx.args.input.tenantId")
+    "sk": $util.dynamodb.toDynamoDBJson("#METADATA")
   },
   "attributeValues" : $util.dynamodb.toMapValuesJson($ctx.args.input)
 }
